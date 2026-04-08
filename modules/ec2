@@ -1,0 +1,29 @@
+resource "aws_launch_template" "nginx" {
+  name_prefix   = "${var.env}-nginx-"
+  image_id      = var.ami_id
+  instance_type = var.instance_type
+
+  user_data = base64encode(<<-EOF
+    #!/bin/bash
+    sudo apt update -y
+    sudo apt install -y nginx
+    echo "Deployed via Terraform (${var.env})" | sudo tee /var/www/html/index.html
+    sudo systemctl enable nginx
+    sudo systemctl start nginx
+  EOF)
+}
+
+resource "aws_autoscaling_group" "nginx_asg" {
+  desired_capacity     = 2
+  max_size             = 3
+  min_size             = 1
+  vpc_zone_identifier  = var.private_subnets
+  launch_template {
+    id      = aws_launch_template.nginx.id
+    version = "$Latest"
+  }
+}
+
+output "instance_ids" {
+  value = aws_autoscaling_group.nginx_asg.id
+}
