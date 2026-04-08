@@ -1,0 +1,17 @@
+terraform-aws-webapp/
+├── main.tf
+├── variables.tf
+├── outputs.tf
+├── modules/
+│   ├── vpc/
+│   │   └── main.tf
+│   ├── ec2/
+│   │   └── main.tf
+│   ├── alb/
+│   │   └── main.tf
+│   └── s3/
+│       └── main.tf
+├── environments/
+│   ├── dev.tfvars
+│   └── prod.tfvars
+└── README.md
